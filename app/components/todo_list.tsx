@@ -7,7 +7,7 @@ export function TodoList() {
   const gameState = useGameState();
 
   return (
-    <div class="todo_list">
+    <div className="todo_list">
       <ul>
         {gameState.tasks.map((task) => <TodoEntry task={task}/>)}
       </ul>

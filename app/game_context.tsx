@@ -1,7 +1,7 @@
 "use client"
 
 import {createContext, useContext, useReducer} from 'react'
-import {GameState} from './game_state'
+import {GameState, InitialGameState, performAction} from './game_state'
 
 export const GameContext = createContext<GameState>(null);
 export const GameDispatchContext = createContext(null);
@@ -11,7 +11,7 @@ export enum GameAction {
 }
 
 export function GameContextProvider({children}) {
-  const [state, dispatch] = useReducer(performAction, new GameState());
+  const [state, dispatch] = useReducer(performAction, InitialGameState);
 
   return (
     <GameContext.Provider value={state}>
@@ -22,15 +22,10 @@ export function GameContextProvider({children}) {
   )
 }
 
-export function useGameState() {
+export function useGameState(): GameState {
   return useContext(GameContext);
 }
 
 export function useDispatch() {
   return useContext(GameDispatchContext);
-}
-
-function performAction(currentState: GameState, action: ActionType) {
-  console.log("Performing action", action, "on", currentState);
-  return currentState;
 }
