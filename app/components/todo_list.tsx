@@ -9,7 +9,7 @@ export function TodoList() {
   return (
     <div className="todo_list">
       <ul>
-        {gameState.tasks.map((task) => <TodoEntry task={task}/>)}
+        {gameState.tasks.map((task, i) => <TodoEntry key={`task_${i}`} task={task}/>)}
       </ul>
     </div>
   )

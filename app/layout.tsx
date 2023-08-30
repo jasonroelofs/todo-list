@@ -18,6 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <title>Todo List</title>
+      </head>
       <body className={inter.className}>
         <GameContextProvider>
           {children}
