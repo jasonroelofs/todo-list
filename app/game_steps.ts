@@ -17,6 +17,15 @@ export const Steps = {
       addTask(gameState, {name: "Perform 100 Tasks", count: 0, needs: 100});
     }
   },
+  batch1000: {
+    story: "Keep going!",
+    activateOn: (gameState: GameState): boolean => {
+      return gameState.totalTasks >= 100;
+    },
+    onAdd: (gameState: GameState) => {
+      addTask(gameState, {name: "Perform 1000 Tasks", count: 0, needs: 1000});
+    }
+  },
   firstWorker: {
     story: "This is getting tedious. How about you allocate a worker to do the task for you?",
     activateOn: (gameState: GameState): boolean => {

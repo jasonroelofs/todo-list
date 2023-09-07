@@ -6,10 +6,8 @@ export function StoryPanel() {
   const gameState = useGameState();
 
   return (
-    <div>
-      <ul>
-        {gameState.activatedStory.map((story) => <li>{story}</li>)}
-      </ul>
-    </div>
+    <ul>
+      {gameState.activatedStory.map((story) => <li>{story}</li>)}
+    </ul>
   )
 }
