@@ -9,14 +9,19 @@ export const Steps = {
     }
   },
   label1: {
-    after: 8,
     story: "You are doing great! Here's the next batch",
+    activateOn: (gameState: GameState): boolean => {
+      return gameState.totalTasks >= 8;
+    },
     onAdd: (gameState: GameState) => {
       addTask(gameState, {name: "Perform 100 Tasks", needs: 100});
     }
   },
   label2: {
     story: "This is getting tedious. How about you allocate a worker to do the task for you?",
+    activateOn: (gameState: GameState): boolean => {
+      return gameState.totalTasks >= 50;
+    },
     onAdd: (gameState: GameState) => {
       addTask(gameState, {name: "Allocate a Worker", needs: 1, type: "worker"})
       gameState.canAllocateWorkers = true;

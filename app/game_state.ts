@@ -6,6 +6,8 @@ export interface GameState {
   totalWorkers: number;
   tasks: Array<Task>;
 
+  activatedSteps: Set<string>;
+
   canAllocateWorkers: boolean;
 }
 
@@ -21,6 +23,8 @@ export const InitialGameState: GameState = {
   totalWorkers: 0,
   tasks: [],
 
+  activatedSteps: new Set(),
+
   canAllocateWorkers: false,
 }
 
@@ -33,16 +37,16 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
 
   switch(action) {
     case GameAction.Load:
-      Steps[0].onAdd(gameState)
+      activateStep("initial", gameState);
       break;
     case GameAction.Tick:
       tickSteps(gameState);
       break;
     case GameAction.PerformTask:
-      incrementTasks(gameState)
+      incrementTasks(gameState);
       break;
     case GameAction.AllocateWorker:
-      allocateWorker(gameState)
+      allocateWorker(gameState);
       break;
   }
 
@@ -68,5 +72,17 @@ function tickSteps(gameState: GameState) {
 }
 
 function checkRules(gameState: GameState) {
+  let stepsToCheck = new Set(Object.keys(Steps));
+  gameState.activatedSteps.forEach((stepName) => stepsToCheck.delete(stepName));
 
+  stepsToCheck.forEach((stepName) => {
+    if(Steps[stepName].activateOn(gameState)) {
+      activateStep(stepName, gameState);
+    }
+  });
+}
+
+function activateStep(stepName: string, gameState: GameState) {
+  Steps[stepName].onAdd(gameState);
+  gameState.activatedSteps.add(stepName);
 }
