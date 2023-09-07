@@ -6,6 +6,7 @@ export interface GameState {
   totalWorkers: number;
   tasks: Array<Task>;
 
+  activatedStory: Array<string>;
   activatedSteps: Set<string>;
 
   canAllocateWorkers: boolean;
@@ -23,6 +24,7 @@ export const InitialGameState: GameState = {
   totalWorkers: 0,
   tasks: [],
 
+  activatedStory: [],
   activatedSteps: new Set(),
 
   canAllocateWorkers: false,
@@ -85,4 +87,5 @@ function checkRules(gameState: GameState) {
 function activateStep(stepName: string, gameState: GameState) {
   Steps[stepName].onAdd(gameState);
   gameState.activatedSteps.add(stepName);
+  gameState.activatedStory.push(Steps[stepName].story);
 }

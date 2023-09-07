@@ -1,6 +1,7 @@
 import {TodoList} from './components/todo_list'
 import {InformationPanel} from './components/information_panel'
 import {ActionPanel} from './components/action_panel'
+import {StoryPanel} from './components/story_panel'
 
 import {useState} from 'react';
 
@@ -13,8 +14,13 @@ export default function Home() {
           <TodoList />
         </div>
         <div className="game_container">
-          <ActionPanel />
-          <InformationPanel />
+          <div className="story_panel">
+            <StoryPanel />
+          </div>
+          <div className="game_panel">
+            <ActionPanel />
+            <InformationPanel />
+          </div>
         </div>
       </main>
     </>
