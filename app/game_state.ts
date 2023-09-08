@@ -19,6 +19,12 @@ export enum GameAction {
   AllocateWorker
 }
 
+export enum ActionType {
+  Global,
+  Task,
+  Worker,
+}
+
 export const InitialGameState: GameState = {
   totalTasks: 0,
   totalWorkers: 0,
@@ -57,23 +63,40 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
   return structuredClone(gameState);
 }
 
-function incrementTasks(gameState: GameState) {
-  gameState.totalTasks += 1;
+function incrementTasks(gameState: GameState, amount: number = 1) {
+  gameState.totalTasks += amount;
 
-  gameState.tasks.forEach((task) => {
-    task.count += 1;
+  // Only increment the first entry we have
+  let task = gameState.tasks.find((task) => {
+    return !task.complete && task.type == ActionType.Task;
   });
+
+  task.count += amount;
 }
 
 function allocateWorker(gameState: GameState) {
   gameState.totalWorkers += 1;
+
+  let task = gameState.tasks.find((task) => {
+    return !task.complete && task.type == ActionType.Worker;
+  });
+
+  task.count += 1;
 }
 
 function tickSteps(gameState: GameState) {
-  gameState.totalTasks += (gameState.totalWorkers);
+  incrementTasks(gameState, gameState.totalWorkers);
 }
 
 function checkRules(gameState: GameState) {
+  // Find entries that are complete
+  gameState.tasks.forEach((task) => {
+    if (!task.complete && task.count >= task.needs) {
+      completeTask(gameState, task);
+    }
+  });
+
+  // Find if we need to add more steps to the todo list
   let stepsToCheck = new Set(Object.keys(Steps));
   gameState.activatedSteps.forEach((stepName) => stepsToCheck.delete(stepName));
 
@@ -88,4 +111,14 @@ function activateStep(stepName: string, gameState: GameState) {
   Steps[stepName].onAdd(gameState);
   gameState.activatedSteps.add(stepName);
   gameState.activatedStory.push(Steps[stepName].story);
+}
+
+function completeTask(gameState: GameState, task: Task) {
+  task.complete = true;
+
+  let tracker = gameState.tasks.find((t) => {
+    return t.type == ActionType.Global;
+  });
+
+  tracker.count += 1;
 }

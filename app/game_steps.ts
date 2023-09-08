@@ -1,11 +1,11 @@
-import {addTask} from "./game_state"
+import {addTask, ActionType} from "./game_state"
 
 export const Steps = {
   initial: {
     story: "Good morning! Your job is simple: clear your TODO LIST! When your TODO LIST is clear, you can go home. Good luck!",
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Complete all tasks and go home"});
-      addTask(gameState, {name: "Perform 10 Tasks", count: 0, needs: 10});
+      addTask(gameState, {name: "Complete all tasks and go home", count: 0, needs: "?", type: ActionType.Global});
+      addTask(gameState, {name: "Perform 10 Tasks", count: 0, needs: 10, type: ActionType.Task});
     }
   },
   batch100: {
@@ -14,7 +14,7 @@ export const Steps = {
       return gameState.totalTasks >= 8;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Perform 100 Tasks", count: 0, needs: 100});
+      addTask(gameState, {name: "Perform 100 Tasks", count: 0, needs: 100, type: ActionType.Task});
     }
   },
   batch1000: {
@@ -23,7 +23,7 @@ export const Steps = {
       return gameState.totalTasks >= 100;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Perform 1000 Tasks", count: 0, needs: 1000});
+      addTask(gameState, {name: "Perform 1000 Tasks", count: 0, needs: 1000, type: ActionType.Task});
     }
   },
   firstWorker: {
@@ -32,7 +32,7 @@ export const Steps = {
       return gameState.totalTasks >= 50;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Allocate a Worker", count: 0, needs: 1, type: "worker"})
+      addTask(gameState, {name: "Allocate a Worker", count: 0, needs: 1, type: ActionType.Worker})
       gameState.canAllocateWorkers = true;
     },
   },
@@ -42,7 +42,7 @@ export const Steps = {
       return gameState.totalWorkers >= 1;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Allocate 100 Workers", count: 0, needs: 100, type: "worker"});
+      addTask(gameState, {name: "Allocate 100 Workers", count: 0, needs: 100, type: ActionType.Worker});
     },
   },
 }
