@@ -2,6 +2,7 @@
 
 import {useDispatch, useGameState} from '../game_context'
 import {GameAction} from '../game_state'
+import {TimeoutButton} from './timeout_button'
 
 export function ActionPanel() {
   const gameState = useGameState();
@@ -9,9 +10,9 @@ export function ActionPanel() {
 
   return (
     <div className="action_panel">
-      <button onClick={() => dispatch(GameAction.PerformTask)}>Perform Task</button>
+      <TimeoutButton onClick={() => dispatch(GameAction.PerformTask)} disableMs={300}>Perform Task</TimeoutButton>
       {gameState.canAllocateWorkers && (
-        <button onClick={() => dispatch(GameAction.AllocateWorker)}>Allocate Worker</button>
+        <TimeoutButton onClick={() => dispatch(GameAction.AllocateWorker)} disableMs={300}>Allocate Worker</TimeoutButton>
       )}
     </div>
   )

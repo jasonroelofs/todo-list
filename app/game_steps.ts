@@ -29,7 +29,7 @@ export const Steps = {
   firstWorker: {
     story: "This is getting tedious. How about you allocate a worker to do the task for you?",
     activateOn: (gameState: GameState): boolean => {
-      return gameState.totalTasks >= 50;
+      return gameState.totalTasks >= 30;
     },
     onAdd: (gameState: GameState) => {
       addTask(gameState, {name: "Allocate a Worker", count: 0, needs: 1, type: ActionType.Worker})
