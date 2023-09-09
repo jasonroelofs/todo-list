@@ -1,22 +1,22 @@
-import {Task} from '../task'
+import {Todo} from '../todo'
 
 type Params = {
-  task: Task
+  todo: Todo
 }
 
-export function TodoEntry({task}: Params) {
-  if(task.complete) {
+export function TodoEntry({todo}: Params) {
+  if(todo.complete) {
     return(
-      <li className="task">
-        <span>{task.name}</span>
+      <li className="todo">
+        <span>{todo.name}</span>
         <span>✔</span>
       </li>
     )
   } else {
     return(
-      <li className="task">
-        <span>{task.name}</span>
-        <span>{task.count}/{task.needs}</span>
+      <li className="todo">
+        <span>{todo.name}</span>
+        <span>{todo.count}/{todo.needs}</span>
       </li>
     )
   }

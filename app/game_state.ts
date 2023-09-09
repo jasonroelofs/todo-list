@@ -1,10 +1,11 @@
-import {Task} from './task'
+import {Todo} from './todo'
 import {Steps} from './game_steps'
 
 export interface GameState {
+  todos: Array<Todo>;
+
   totalTasks: number;
   totalWorkers: number;
-  tasks: Array<Task>;
 
   activatedStory: Array<string>;
   activatedSteps: Set<string>;
@@ -20,15 +21,16 @@ export enum GameAction {
 }
 
 export enum ActionType {
-  Global,
+  Todo,
   Task,
   Worker,
 }
 
 export const InitialGameState: GameState = {
+  todos: [],
+
   totalTasks: 0,
   totalWorkers: 0,
-  tasks: [],
 
   activatedStory: [],
   activatedSteps: new Set(),
@@ -36,8 +38,8 @@ export const InitialGameState: GameState = {
   canAllocateWorkers: false,
 }
 
-export function addTask(gameState: GameState, task: Task) {
-  gameState.tasks.push(task);
+export function addTodo(gameState: GameState, todo: Todo) {
+  gameState.todos.push(todo);
 }
 
 export function performAction(gameState: GameState, action: GameAction): GameState {
@@ -67,21 +69,21 @@ function incrementTasks(gameState: GameState, amount: number = 1) {
   gameState.totalTasks += amount;
 
   // Only increment the first entry we have
-  let task = gameState.tasks.find((task) => {
-    return !task.complete && task.type == ActionType.Task;
+  let todo = gameState.todos.find((todo) => {
+    return !todo.complete && todo.type == ActionType.Task;
   });
 
-  task.count += amount;
+  todo.count += amount;
 }
 
 function allocateWorker(gameState: GameState) {
   gameState.totalWorkers += 1;
 
-  let task = gameState.tasks.find((task) => {
-    return !task.complete && task.type == ActionType.Worker;
+  let todo = gameState.todos.find((todo) => {
+    return !todo.complete && todo.type == ActionType.Worker;
   });
 
-  task.count += 1;
+  todo.count += 1;
 }
 
 function tickSteps(gameState: GameState) {
@@ -90,9 +92,9 @@ function tickSteps(gameState: GameState) {
 
 function checkRules(gameState: GameState) {
   // Find entries that are complete
-  gameState.tasks.forEach((task) => {
-    if (!task.complete && task.count >= task.needs) {
-      completeTask(gameState, task);
+  gameState.todos.forEach((todo) => {
+    if (!todo.complete && todo.count >= todo.needs) {
+      completeTodo(gameState, todo);
     }
   });
 
@@ -113,11 +115,11 @@ function activateStep(stepName: string, gameState: GameState) {
   gameState.activatedStory.push(Steps[stepName].story);
 }
 
-function completeTask(gameState: GameState, task: Task) {
-  task.complete = true;
+function completeTodo(gameState: GameState, todo: Todo) {
+  todo.complete = true;
 
-  let tracker = gameState.tasks.find((t) => {
-    return t.type == ActionType.Global;
+  let tracker = gameState.todos.find((t) => {
+    return t.type == ActionType.Todo;
   });
 
   tracker.count += 1;

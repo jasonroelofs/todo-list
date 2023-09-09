@@ -1,11 +1,11 @@
-import {addTask, ActionType} from "./game_state"
+import {addTodo, ActionType} from "./game_state"
 
 export const Steps = {
   initial: {
     story: "Good morning! Your job is simple: clear your TODO LIST! When your TODO LIST is clear, you can go home. Good luck!",
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Complete all tasks and go home", count: 0, needs: "?", type: ActionType.Global});
-      addTask(gameState, {name: "Perform 10 Tasks", count: 0, needs: 10, type: ActionType.Task});
+      addTodo(gameState, {name: "Complete all TODOs and go home", count: 0, needs: "?", type: ActionType.Todo});
+      addTodo(gameState, {name: "Perform 10 Tasks", count: 0, needs: 10, type: ActionType.Task});
     }
   },
   batch100: {
@@ -14,7 +14,7 @@ export const Steps = {
       return gameState.totalTasks >= 8;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Perform 100 Tasks", count: 0, needs: 100, type: ActionType.Task});
+      addTodo(gameState, {name: "Perform 100 Tasks", count: 0, needs: 100, type: ActionType.Task});
     }
   },
   batch1000: {
@@ -23,7 +23,16 @@ export const Steps = {
       return gameState.totalTasks >= 100;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Perform 1000 Tasks", count: 0, needs: 1000, type: ActionType.Task});
+      addTodo(gameState, {name: "Perform 1000 Tasks", count: 0, needs: 1000, type: ActionType.Task});
+    }
+  },
+  batch10000: {
+    story: "And going!",
+    activateOn: (gameState: GameState): boolean => {
+      return gameState.totalTasks >= 1000;
+    },
+    onAdd: (gameState: GameState) => {
+      addTodo(gameState, {name: "Perform 10,000 Tasks", count: 0, needs: 10000, type: ActionType.Task});
     }
   },
   firstWorker: {
@@ -32,17 +41,26 @@ export const Steps = {
       return gameState.totalTasks >= 30;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Allocate a Worker", count: 0, needs: 1, type: ActionType.Worker})
+      addTodo(gameState, {name: "Allocate a Worker", count: 0, needs: 1, type: ActionType.Worker})
       gameState.canAllocateWorkers = true;
     },
   },
-  moreWorkers: {
-    story: "One worker will never be enough, allocate more!",
+  workersCostTasks: {
+    story: "You'll notice that the worker had a cost. That's right, the tasks you perform can be used as currency to improve your efficiency! Lets allocate more workers.",
     activateOn: (gameState: GameState): boolean => {
       return gameState.totalWorkers >= 1;
     },
     onAdd: (gameState: GameState) => {
-      addTask(gameState, {name: "Allocate 100 Workers", count: 0, needs: 100, type: ActionType.Worker});
+      addTodo(gameState, {name: "Allocate 10 Workers", count: 0, needs: 10, type: ActionType.Worker});
+    },
+  },
+  moreWorkers: {
+    story: "Keep it going! You can never have too many workers.",
+    activateOn: (gameState: GameState): boolean => {
+      return gameState.totalWorkers >= 8;
+    },
+    onAdd: (gameState: GameState) => {
+      addTodo(gameState, {name: "Allocate 100 Workers", count: 0, needs: 100, type: ActionType.Worker});
     },
   },
 }
