@@ -2,7 +2,7 @@ import {ActionType} from './game_state'
 
 export interface Todo {
   name: string;
-  count: number | string;
+  count: number;
   needs: number | string;
   complete: boolean;
   type: ActionType;

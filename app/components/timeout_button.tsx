@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react'
+import {useEffect, useState, ReactNode} from 'react'
 
 type Params = {
-  onClick: () => null,
+  onClick: () => void,
   disableMs: number,
-  children: React.PropsWithChildren<{}>
+  children?: ReactNode
 }
 
 export function TimeoutButton({onClick, disableMs, children}: Params) {
