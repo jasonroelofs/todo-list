@@ -161,3 +161,15 @@ function completeTodo(gameState: GameState, todo: Todo) {
 export function activeTodoOfType(gameState: GameState, actionType: ActionType): Todo {
   return gameState.todos.find((t) => !t.complete && t.type == actionType);
 }
+
+export function allTodoOfType(gameState: GameState, actionType: ActionType): Todo {
+  let todos: Array<Todo> = [];
+
+  gameState.todos.forEach((t) => {
+    if(!t.complete && t.type == actionType) {
+      todos.push(t);
+    }
+  });
+
+  return todos;
+}

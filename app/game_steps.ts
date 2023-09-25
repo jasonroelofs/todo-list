@@ -1,4 +1,4 @@
-import {addTodo, activeTodoOfType, ActionType} from "./game_state"
+import {addTodo, allTodoOfType, ActionType} from "./game_state"
 import {Todo} from './todo'
 
 /**
@@ -62,20 +62,32 @@ export const Steps = {
  * Infinite templates for providing ever growing TODOs.
  * When the current active TODO of each type gets to 80%, add the next one.
  */
-export function nextTaskTODO(gameState: GameState): Todo {
-  let activeTask = activeTodoOfType(gameState, ActionType.Task);
+export function nextTaskTODO(gameState: GameState) {
+  let todos = allTodoOfType(gameState, ActionType.Task);
 
-  if (activeTask && (activeTask.count / activeTask.needs >= 0.8)) {
-    const newCount = activeTask.needs * 10;
+  // We've already added our new todo so ignore this logic.
+  if (todos.length > 1) {
+    return;
+  }
+
+  let activeTodo = todos[0];
+  if (activeTodo && (activeTodo.count / activeTodo.needs >= 0.8)) {
+    const newCount = activeTodo.needs * 10;
     addTodo(gameState, {name: `Perform ${newCount} Tasks`, count: 0, needs: newCount, type: ActionType.Task});
   }
 }
 
-export function nextWorkerTODO(gameState: GameState): Todo {
-  let activeTask = activeTodoOfType(gameState, ActionType.Worker);
+export function nextWorkerTODO(gameState: GameState) {
+  let todos = allTodoOfType(gameState, ActionType.Worker);
 
-  if (activeTask && (activeTask.count / activeTask.needs >= 0.8)) {
-    const newCount = activeTask.needs * 10;
+  // We've already added our new todo so ignore this logic.
+  if (todos.length > 1) {
+    return;
+  }
+
+  let activeTodo = todos[0];
+  if (activeTodo && (activeTodo.count / activeTodo.needs >= 0.8)) {
+    const newCount = activeTodo.needs * 10;
     addTodo(gameState, {name: `Allocate ${newCount} Workers`, count: 0, needs: newCount, type: ActionType.Worker});
   }
 }
