@@ -7,7 +7,7 @@ export function StoryPanel() {
 
   return (
     <ul>
-      {gameState.activatedStory.map((story) => <li>{story}</li>)}
+      {gameState.activatedStory.map((story, i) => <li key={`story_${i}`}>{story}</li>)}
     </ul>
   )
 }

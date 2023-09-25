@@ -6,4 +6,8 @@ export interface Todo {
   needs: number | string;
   complete: boolean;
   type: ActionType;
+
+  // Pointer back to the Story step that created this task,
+  // allowing us to run some extra step functionality as needed
+  createdBy: string;
 }

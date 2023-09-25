@@ -1,5 +1,5 @@
 import {Todo} from './todo'
-import {Steps} from './game_steps'
+import {Steps, nextTaskTODO, nextWorkerTODO} from './game_steps'
 
 export interface GameState {
   todos: Array<Todo>;
@@ -65,24 +65,6 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
   return structuredClone(gameState);
 }
 
-function incrementTasks(gameState: GameState, amount: number = 1) {
-  gameState.taskWallet += amount;
-  gameState.totalTasks += amount;
-
-  // Only increment the first entry we have
-  let todo = gameState.todos.find((todo) => {
-    return !todo.complete && todo.type == ActionType.Task;
-  });
-
-  todo.count += amount;
-
-  // TODO: Count += amount can lead to applying way more
-  // tasks to the current todo than is necessary, effectively losing progress.
-  // Figure out how to cleanly iterate through or otherwise clamp `count` and apply
-  // the remainder to the next-in-line. Also making sure that we run through the game rules
-  // so that there always is a next-in-line.
-}
-
 /**
  * Worker Support
  */
@@ -103,10 +85,7 @@ function allocateWorker(gameState: GameState) {
   gameState.taskWallet -= workerCost(gameState);
   gameState.totalWorkers += 1;
 
-  let todo = gameState.todos.find((todo) => {
-    return !todo.complete && todo.type == ActionType.Worker;
-  });
-
+  let todo = activeTodoOfType(gameState, ActionType.Worker);
   todo.count += 1;
 }
 
@@ -126,7 +105,7 @@ function checkRules(gameState: GameState) {
     }
   });
 
-  // Find if we need to add more steps to the todo list
+  // Find if we need to activate the next story unit
   let stepsToCheck = new Set(Object.keys(Steps));
   gameState.activatedSteps.forEach((stepName) => stepsToCheck.delete(stepName));
 
@@ -135,20 +114,50 @@ function checkRules(gameState: GameState) {
       activateStep(stepName, gameState);
     }
   });
+
+  // See if we need to add any more TODOs to the list
+  nextTaskTODO(gameState);
+  nextWorkerTODO(gameState);
 }
 
 function activateStep(stepName: string, gameState: GameState) {
-  Steps[stepName].onAdd(gameState);
+  let step = Steps[stepName]
+
+  if (step.onAdd) {
+    step.onAdd(gameState);
+  }
+
   gameState.activatedSteps.add(stepName);
   gameState.activatedStory.push(Steps[stepName].story);
+}
+
+function incrementTasks(gameState: GameState, amount: number = 1) {
+  gameState.taskWallet += amount;
+  gameState.totalTasks += amount;
+
+  // Only increment the first entry we have
+  let todo = activeTodoOfType(gameState, ActionType.Task);
+
+  todo.count += amount;
+
+  // TODO: Count += amount can lead to applying way more
+  // tasks to the current todo than is necessary, effectively losing progress.
+  // Figure out how to cleanly iterate through or otherwise clamp `count` and apply
+  // the remainder to the next-in-line. Also making sure that we run through the game rules
+  // so that there always is a next-in-line.
 }
 
 function completeTodo(gameState: GameState, todo: Todo) {
   todo.complete = true;
 
-  let tracker = gameState.todos.find((t) => {
-    return t.type == ActionType.Todo;
-  });
+  if (todo.createdBy && Steps[todo.createdBy].onComplete) {
+    Steps[todo.createdBy].onComplete(gameState);
+  }
 
+  let tracker = activeTodoOfType(gameState, ActionType.Todo);
   tracker.count += 1;
+}
+
+export function activeTodoOfType(gameState: GameState, actionType: ActionType): Todo {
+  return gameState.todos.find((t) => !t.complete && t.type == actionType);
 }
