@@ -36,7 +36,7 @@ export const Steps = {
     }
   },
   firstWorker: {
-    story: "This is getting tedious. How about you allocate a worker to do the task for you?",
+    story: "This is getting tedious. How about you allocate a worker to perform task for you?",
     activateOn: (gameState: GameState): boolean => {
       return gameState.totalTasks >= 30;
     },
@@ -46,7 +46,7 @@ export const Steps = {
     },
   },
   workersCostTasks: {
-    story: "You'll notice that the worker had a cost. That's right, the tasks you perform can be used as currency to improve your efficiency! Lets allocate more workers.",
+    story: "You'll notice that the worker have a cost. That's right, the tasks you perform can be used as currency to improve your efficiency! Lets allocate more workers.",
     activateOn: (gameState: GameState): boolean => {
       return gameState.totalWorkers >= 1;
     },

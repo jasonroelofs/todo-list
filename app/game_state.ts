@@ -3,6 +3,7 @@ import {Steps} from './game_steps'
 
 export interface GameState {
   todos: Array<Todo>;
+  taskWallet: number;
 
   totalTasks: number;
   totalWorkers: number;
@@ -28,6 +29,7 @@ export enum ActionType {
 
 export const InitialGameState: GameState = {
   todos: [],
+  taskWallet: 0,
 
   totalTasks: 0,
   totalWorkers: 0,
@@ -43,8 +45,6 @@ export function addTodo(gameState: GameState, todo: Todo) {
 }
 
 export function performAction(gameState: GameState, action: GameAction): GameState {
-  console.log("Performing game action", action, "on", gameState);
-
   switch(action) {
     case GameAction.Load:
       activateStep("initial", gameState);
@@ -66,6 +66,7 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
 }
 
 function incrementTasks(gameState: GameState, amount: number = 1) {
+  gameState.taskWallet += amount;
   gameState.totalTasks += amount;
 
   // Only increment the first entry we have
@@ -74,9 +75,32 @@ function incrementTasks(gameState: GameState, amount: number = 1) {
   });
 
   todo.count += amount;
+
+  // TODO: Count += amount can lead to applying way more
+  // tasks to the current todo than is necessary, effectively losing progress.
+  // Figure out how to cleanly iterate through or otherwise clamp `count` and apply
+  // the remainder to the next-in-line. Also making sure that we run through the game rules
+  // so that there always is a next-in-line.
+}
+
+/**
+ * Worker Support
+ */
+
+export function workersEnabled(gameState: GameState): boolean {
+  return gameState.canAllocateWorkers;
+}
+
+export function workerCost(gameState: GameState): number {
+  return Math.ceil((gameState.totalWorkers + 1) * 1.05);
+}
+
+export function canAllocateWorker(gameState: GameState): boolean {
+  return gameState.canAllocateWorkers && workerCost(gameState) < gameState.taskWallet;
 }
 
 function allocateWorker(gameState: GameState) {
+  gameState.taskWallet -= workerCost(gameState);
   gameState.totalWorkers += 1;
 
   let todo = gameState.todos.find((todo) => {
@@ -85,6 +109,10 @@ function allocateWorker(gameState: GameState) {
 
   todo.count += 1;
 }
+
+/**
+ * Gameplay Loop and general actions
+ */
 
 function tickSteps(gameState: GameState) {
   incrementTasks(gameState, gameState.totalWorkers);

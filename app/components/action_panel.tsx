@@ -1,7 +1,7 @@
 "use client"
 
 import {useDispatch, useGameState} from '../game_context'
-import {GameAction} from '../game_state'
+import {GameAction, workersEnabled, canAllocateWorker, workerCost} from '../game_state'
 import {TimeoutButton} from './timeout_button'
 
 export function ActionPanel() {
@@ -10,9 +10,14 @@ export function ActionPanel() {
 
   return (
     <div className="action_panel">
-      <TimeoutButton onClick={() => dispatch(GameAction.PerformTask)} disableMs={300}>Perform Task</TimeoutButton>
-      {gameState.canAllocateWorkers && (
-        <TimeoutButton onClick={() => dispatch(GameAction.AllocateWorker)} disableMs={300}>Allocate Worker</TimeoutButton>
+      <TimeoutButton onClick={() => dispatch(GameAction.PerformTask)} disableMs={0}>Perform Task</TimeoutButton>
+      {workersEnabled(gameState) && (
+        <button
+          onClick={() => dispatch(GameAction.AllocateWorker)}
+          disabled={!canAllocateWorker(gameState)}
+        >
+          Allocate Worker ({workerCost(gameState)} Tasks)
+        </button>
       )}
     </div>
   )

@@ -7,9 +7,13 @@ export function InformationPanel() {
 
   return (
     <div className="information_panel">
-      <div>{gameState.totalTasks} Tasks Performed</div>
-      {gameState.canAllocateWorkers && (
-        <div>{gameState.totalWorkers} Workers Allocated</div>
+      {gameState.canAllocateWorkers ? (
+        <>
+          <div>{gameState.taskWallet} Tasks</div>
+          <div>{gameState.totalWorkers} Workers Allocated</div>
+        </>
+      ) : (
+        <div>{gameState.totalTasks} Total Tasks Performed</div>
       )}
     </div>
   )
