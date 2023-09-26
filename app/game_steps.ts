@@ -63,22 +63,23 @@ export const Steps = {
  * When the current active TODO of each type gets to 80%, add the next one.
  */
 export function nextTaskTODO(gameState: GameState) {
-  let todos = allTodoOfType(gameState, ActionType.Task);
-
-  // We've already added our new todo so ignore this logic.
-  if (todos.length > 1) {
-    return;
-  }
-
-  let activeTodo = todos[0];
-  if (activeTodo && (activeTodo.count / activeTodo.needs >= 0.8)) {
+  let activeTodo = findTodoReadyForNext(gameState, ActionType.Task);
+  if (activeTodo) {
     const newCount = activeTodo.needs * 10;
     addTodo(gameState, {name: `Perform ${newCount} Tasks`, count: 0, needs: newCount, type: ActionType.Task});
   }
 }
 
 export function nextWorkerTODO(gameState: GameState) {
-  let todos = allTodoOfType(gameState, ActionType.Worker);
+  let activeTodo = findTodoReadyForNext(gameState, ActionType.Worker);
+  if (activeTodo) {
+    const newCount = activeTodo.needs * 10;
+    addTodo(gameState, {name: `Allocate ${newCount} Workers`, count: 0, needs: newCount, type: ActionType.Worker});
+  }
+}
+
+function findTodoReadyForNext(gameState: GameState, actionType: ActionType): Todo {
+  let todos = allTodoOfType(gameState, actionType);
 
   // We've already added our new todo so ignore this logic.
   if (todos.length > 1) {
@@ -87,7 +88,6 @@ export function nextWorkerTODO(gameState: GameState) {
 
   let activeTodo = todos[0];
   if (activeTodo && (activeTodo.count / activeTodo.needs >= 0.8)) {
-    const newCount = activeTodo.needs * 10;
-    addTodo(gameState, {name: `Allocate ${newCount} Workers`, count: 0, needs: newCount, type: ActionType.Worker});
+    return activeTodo;
   }
 }
