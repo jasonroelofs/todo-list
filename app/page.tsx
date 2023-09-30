@@ -1,5 +1,4 @@
 import {TodoList} from './components/todo_list'
-import {InformationPanel} from './components/information_panel'
 import {ActionPanel} from './components/action_panel'
 import {StoryPanel} from './components/story_panel'
 
@@ -19,7 +18,6 @@ export default function Home() {
           </div>
           <div className="game_panel">
             <ActionPanel />
-            <InformationPanel />
           </div>
         </div>
       </main>

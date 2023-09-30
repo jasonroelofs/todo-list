@@ -72,16 +72,16 @@ header {
     flex-direction: row;
   }
 
-  .information_panel {
-    flex-grow: 1;
-    border: 1px solid black;
-    padding: 10px;
-  }
-
   .action_panel {
+    display: grid;
     flex-grow: 1;
     border: 1px solid black;
     padding: 10px;
+
+    grid-template-columns: repeat(4, 1fr);
+    grid-column-gap: 10px;
+    grid-auto-flow: row;
+    grid-row-gap: 10px;
 
     button {
       padding: 5px;
