@@ -1,5 +1,6 @@
 import {Todo} from './todo'
 import {Steps, nextTaskTODO, nextWorkerTODO} from './game_steps'
+import {workerCost} from './formulas'
 
 export interface GameState {
   todos: Array<Todo>;
@@ -71,10 +72,6 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
 
 export function workersEnabled(gameState: GameState): boolean {
   return gameState.canAllocateWorkers;
-}
-
-export function workerCost(gameState: GameState): number {
-  return Math.ceil((gameState.totalWorkers + 1) * 1.05);
 }
 
 export function canAllocateWorker(gameState: GameState): boolean {

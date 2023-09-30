@@ -1,8 +1,9 @@
 "use client"
 
 import {useDispatch, useGameState} from '../game_context'
-import {GameAction, workersEnabled, canAllocateWorker, workerCost} from '../game_state'
+import {GameAction, workersEnabled, canAllocateWorker} from '../game_state'
 import {TimeoutButton} from './timeout_button'
+import {workerCost} from '../formulas'
 
 export function ActionPanel() {
   const gameState = useGameState();
