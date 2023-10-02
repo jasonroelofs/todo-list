@@ -1,20 +1,37 @@
 "use client"
 
 import {useDispatch, useGameState} from '../game_context'
-import {GameAction, workersEnabled, canAllocateWorker} from '../game_state'
+import {GameAction, workersEnabled, canAllocateWorker, canIncreaseTaskProductivity} from '../game_state'
 import {TimeoutButton} from './timeout_button'
-import {workerCost, workerProductivity} from '../formulas'
+import {workerCost, taskProductivity, taskProductivityCost, tasksPerClick, workerProductivity} from '../formulas'
+import {formatAsPercent} from '../utils'
 
 function PerformTasksRow() {
   const gameState = useGameState();
   const dispatch = useDispatch();
 
+  let productivityString = "";
+
+  if (gameState.enableTaskProductivity) {
+    productivityString = (
+      <>
+        `${formatAsPercent(taskProductivity(gameState))} Task Productivity`
+        <button
+          onClick={() => dispatch(GameAction.IncreaseTaskProductivity)}
+          disabled={!canIncreaseTaskProductivity(gameState)}
+        >
+          +10% ({taskProductivityCost(gameState)} Tasks)
+        </button>
+      </>
+    );
+  }
+
   return (
     <>
       <strong>{gameState.taskWallet} Tasks</strong>
-      <div>0% Task Productivity</div>
-      <div>1 Task Per Click</div>
-      <TimeoutButton onClick={() => dispatch(GameAction.PerformTask)} disableMs={0}>Perform Task</TimeoutButton>
+      <div>{productivityString}</div>
+      <div>{tasksPerClick(gameState)} Task / click</div>
+      <TimeoutButton onClick={() => dispatch(GameAction.PerformTask)} disableMs={1000}>Perform Task</TimeoutButton>
     </>
   );
 }

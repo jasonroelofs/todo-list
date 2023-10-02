@@ -1,6 +1,6 @@
 import {Todo} from './todo'
 import {Steps, nextTaskTODO, nextWorkerTODO} from './game_steps'
-import {workerCost} from './formulas'
+import {workerCost, taskProductivityCost} from './formulas'
 
 export interface GameState {
   todos: Array<Todo>;
@@ -9,16 +9,21 @@ export interface GameState {
   totalTasks: number;
   totalWorkers: number;
 
+  taskProductivity: number;
+  workerProductivity: number;
+
   activatedStory: Array<string>;
   activatedSteps: Set<string>;
 
-  canAllocateWorkers: boolean;
+  enableTaskProductivity: boolean;
+  enableWorkers: boolean;
 }
 
 export enum GameAction {
   Load,
   Tick,
   PerformTask,
+  IncreaseTaskProductivity,
   AllocateWorker
 }
 
@@ -35,10 +40,14 @@ export const InitialGameState: GameState = {
   totalTasks: 0,
   totalWorkers: 0,
 
+  taskProductivity: 0,
+  workerProductivity: 1,
+
   activatedStory: [],
   activatedSteps: new Set(),
 
-  canAllocateWorkers: false,
+  enableTaskProductivity: false,
+  enableWorkers: false,
 }
 
 export function addTodo(gameState: GameState, todo: Todo) {
@@ -56,6 +65,9 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
     case GameAction.PerformTask:
       incrementTasks(gameState);
       break;
+    case GameAction.IncreaseTaskProductivity:
+      incrementTaskProductivity(gameState);
+      break;
     case GameAction.AllocateWorker:
       allocateWorker(gameState);
       break;
@@ -66,16 +78,25 @@ export function performAction(gameState: GameState, action: GameAction): GameSta
   return structuredClone(gameState);
 }
 
+export function canIncreaseTaskProductivity(gameState: GameState): boolean {
+  return gameState.enableTaskProductivity && taskProductivityCost(gameState) < gameState.taskWallet;
+}
+
+function incrementTaskProductivity(gameState: GameState) {
+  gameState.taskWallet -= taskProductivityCost(gameState);
+  gameState.taskProductivity += 0.10;
+}
+
 /**
  * Worker Support
  */
 
 export function workersEnabled(gameState: GameState): boolean {
-  return gameState.canAllocateWorkers;
+  return gameState.enableWorkers;
 }
 
 export function canAllocateWorker(gameState: GameState): boolean {
-  return gameState.canAllocateWorkers && workerCost(gameState) < gameState.taskWallet;
+  return gameState.enableWorkers && workerCost(gameState) < gameState.taskWallet;
 }
 
 function allocateWorker(gameState: GameState) {

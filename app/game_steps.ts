@@ -13,31 +13,28 @@ export const Steps = {
     }
   },
   batch100: {
-    story: "You are doing great! Here's the next batch",
+    story: "You're almost done with your first batch. Here's the second, and there are many more to come.",
     activateOn: (gameState: GameState): boolean => {
       return gameState.totalTasks >= 8;
     },
   },
-  batch1000: {
-    story: "Keep going!",
+  taskProductivity: {
+    story: "You will need to be more productive if you're going to empty your TODO LIST! Try bumping up your task productivity!",
     activateOn: (gameState: GameState): boolean => {
-      return gameState.totalTasks >= 100;
+      return gameState.totalTasks >= 10;
     },
-  },
-  batch10000: {
-    story: "And going!",
-    activateOn: (gameState: GameState): boolean => {
-      return gameState.totalTasks >= 1000;
-    },
+    onAdd: (gameState: GameState) => {
+      gameState.enableTaskProductivity = true;
+    }
   },
   firstWorker: {
     story: "This is getting tedious. How about you allocate a worker to perform task for you?",
     activateOn: (gameState: GameState): boolean => {
-      return gameState.totalTasks >= 30;
+      return gameState.totalTasks >= 20;
     },
     onAdd: (gameState: GameState) => {
       addTodo(gameState, {name: "Allocate a Worker", count: 0, needs: 1, type: ActionType.Worker, createdBy: "firstWorker"});
-      gameState.canAllocateWorkers = true;
+      gameState.enableWorkers = true;
     },
     onComplete: (gameState: GameState) => {
       // This call sets up Workers to make proper use of the templates for all further worker-type TODOs
